@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Contracts;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
 
@@ -19,7 +20,7 @@ namespace API.Controllers
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-        public List<User> GetAll()
+        public async Task<ActionResult<List<User>>> GetAll()
         {
             try
             {
@@ -37,12 +38,12 @@ namespace API.Controllers
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-        public User Get(Guid id)
+        public async Task<ActionResult<User>> Get(Guid id)
         {
             try
-            {
-                var user = new User();
-                return Ok(User);
+            {              
+
+                return Ok();
             }
             catch (Exception ex)
             {
