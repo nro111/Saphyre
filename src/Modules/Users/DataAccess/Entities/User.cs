@@ -1,7 +1,11 @@
-﻿namespace Contracts
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+
+namespace Entities
 {
-    public class User
+    public partial class User
     {
+        [Key]
         public required Guid Id { get; set; }
         public required string FirstName { get; set; }
         public required string LastName { get; set; }

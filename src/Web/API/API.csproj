@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Modules\Users\Application\Application\Application.csproj" />
     <ProjectReference Include="..\..\Modules\Users\Contracts\Contracts.csproj" />
   </ItemGroup>
 

@@ -1,4 +1,5 @@
-﻿using Contracts;
+﻿using Application.Interfaces;
+using Contracts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
@@ -9,10 +10,13 @@ namespace API.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
+        private readonly IUserService _userService;
         private readonly ILogger<UserController> _logger;
         public UserController(
+            IUserService userService,
             ILogger<UserController> logger) 
-        { 
+        {
+            _userService = userService;
             _logger = logger;
         }
 
@@ -20,12 +24,12 @@ namespace API.Controllers
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<List<User>>> GetAll()
+        public async Task<ActionResult<List<UserDTO>>> GetAll()
         {
             try
             {
-                var users = new List<User>();
-                return users;
+                var users = await _userService.GetAll();
+                return Ok(users);
             }
             catch (Exception ex) 
             {
@@ -38,12 +42,12 @@ namespace API.Controllers
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<User>> Get(Guid id)
+        public async Task<ActionResult<UserDTO>> Get(Guid id)
         {
             try
             {              
-
-                return Ok();
+                var user = await _userService.Get(id);
+                return Ok(user);
             }
             catch (Exception ex)
             {
@@ -56,12 +60,12 @@ namespace API.Controllers
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<User>> Create([FromBody] User user)
+        public async Task<ActionResult<bool>> Create([FromBody] UserDTO user)
         {
             try
             {
-
-                return Ok();
+                var isSuccess = await _userService.Create(user);
+                return isSuccess ? Ok() : Problem();
             }
             catch (Exception ex)
             {
@@ -74,12 +78,12 @@ namespace API.Controllers
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<User>> Update(Guid id)
+        public async Task<ActionResult<UserDTO>> Update(UserDTO user)
         {
             try
             {
-
-                return Ok();
+                var isSuccess = await _userService.Update(user);
+                return isSuccess ? Ok() : Problem();
             }
             catch (Exception ex)
             {
@@ -92,12 +96,12 @@ namespace API.Controllers
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<User>> Delete(Guid id)
+        public async Task<ActionResult<UserDTO>> Delete(Guid id)
         {
             try
             {
-
-                return Ok();
+                var isSuccess = await _userService.Delete(id);
+                return isSuccess ? Ok() : Problem();
             }
             catch (Exception ex)
             {
