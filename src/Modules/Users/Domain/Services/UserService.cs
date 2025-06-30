@@ -16,29 +16,69 @@ namespace Domain.Services
             _userRepository = userRepository;
             _logger = logger;
         }
-        public Task<bool> Create(UserDTO user)
+        public async Task<bool> Create(UserDTO user)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await _userRepository.Create(user);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return false;
+            }
         }
 
-        public Task<bool> Delete(Guid id)
+        public async Task<bool> Delete(Guid id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await _userRepository.Delete(id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return false;
+            }
         }
 
-        public Task<UserDTO> Get(Guid id)
+        public async Task<UserDTO> Get(Guid id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await _userRepository.Get(id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return null;
+            }
         }
 
-        public Task<List<UserDTO>> GetAll()
+        public async Task<List<UserDTO>> GetAll()
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await _userRepository.GetAll();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return new List<UserDTO>();
+            }
         }
 
-        public Task<bool> Update(UserDTO user)
+        public async Task<bool> Update(UserDTO user)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await _userRepository.Update(user);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return false;
+            }
         }
     }
 }
