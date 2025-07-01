@@ -1,8 +1,7 @@
 ﻿using Application.Interfaces;
 using Contracts;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Routing;
+using Shared;
 
 namespace API.Controllers
 {
@@ -23,31 +22,45 @@ namespace API.Controllers
         [HttpGet("all")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<List<UserDTO>>> GetAll()
         {
             try
             {
-                var users = await _userService.GetAll();
-                return Ok(users);
+                var result = await _userService.GetAll();
+                return result.Status switch
+                {
+                    OperationStatus.Ok => Ok(result.Value),
+                    OperationStatus.NotFound => NotFound(result.Error),
+                    OperationStatus.InternalError => StatusCode(500, result.Error),
+                    _ => Problem("Unexpected result status")
+                };
             }
             catch (Exception ex) 
             {
                 _logger.LogError(ex, ex.Message);
-                return Problem();
+                return Problem("Unexpected result status");
             }
         }
 
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<UserDTO>> Get(Guid id)
         {
             try
             {              
-                var user = await _userService.Get(id);
-                return Ok(user);
+                var result = await _userService.Get(id);
+                return result.Status switch
+                {
+                    OperationStatus.Ok => Ok(result.Value),
+                    OperationStatus.NotFound => NotFound(result.Error),
+                    OperationStatus.InternalError => StatusCode(500, result.Error),
+                    _ => Problem("Unexpected result status")
+                };
             }
             catch (Exception ex)
             {
@@ -64,8 +77,14 @@ namespace API.Controllers
         {
             try
             {
-                var isSuccess = await _userService.Create(user);
-                return isSuccess ? Ok() : Problem();
+                var result = await _userService.Create(user);
+                return result.Status switch
+                {
+                    OperationStatus.Ok => Ok(result.Value),
+                    OperationStatus.NotFound => NotFound(result.Error),
+                    OperationStatus.InternalError => StatusCode(500, result.Error),
+                    _ => Problem("Unexpected result status")
+                };
             }
             catch (Exception ex)
             {
@@ -82,8 +101,14 @@ namespace API.Controllers
         {
             try
             {
-                var isSuccess = await _userService.Update(user);
-                return isSuccess ? Ok() : Problem();
+                var result = await _userService.Update(user);
+                return result.Status switch
+                {
+                    OperationStatus.Ok => Ok(result.Value),
+                    OperationStatus.NotFound => NotFound(result.Error),
+                    OperationStatus.InternalError => StatusCode(500, result.Error),
+                    _ => Problem("Unexpected result status")
+                };
             }
             catch (Exception ex)
             {
@@ -100,8 +125,14 @@ namespace API.Controllers
         {
             try
             {
-                var isSuccess = await _userService.Delete(id);
-                return isSuccess ? Ok() : Problem();
+                var result = await _userService.Delete(id);
+                return result.Status switch
+                {
+                    OperationStatus.Ok => Ok(result.Value),
+                    OperationStatus.NotFound => NotFound(result.Error),
+                    OperationStatus.InternalError => StatusCode(500, result.Error),
+                    _ => Problem("Unexpected result status")
+                };
             }
             catch (Exception ex)
             {

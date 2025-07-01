@@ -1,4 +1,5 @@
 ﻿using Contracts;
+using Shared;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,10 +8,10 @@ namespace Application.Interfaces
 {
     public interface IUserService
     {
-        public Task<List<UserDTO>> GetAll();
-        public Task<UserDTO> Get(Guid id);
-        public Task<bool> Create(UserDTO user);
-        public Task<bool> Update(UserDTO user);
-        public Task<bool> Delete(Guid id);
+        Task<OperationResult<bool>> Create(UserDTO user);
+        Task<OperationResult<bool>> Delete(Guid id);
+        Task<OperationResult<UserDTO>> Get(Guid id);
+        Task<OperationResult<List<UserDTO>>> GetAll();
+        Task<OperationResult<bool>> Update(UserDTO user);
     }
 }

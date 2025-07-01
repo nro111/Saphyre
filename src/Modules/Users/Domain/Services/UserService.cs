@@ -1,6 +1,7 @@
 ﻿using Application.Interfaces;
 using Contracts;
 using Microsoft.Extensions.Logging;
+using Shared;
 
 namespace Domain.Services
 {
@@ -16,7 +17,7 @@ namespace Domain.Services
             _userRepository = userRepository;
             _logger = logger;
         }
-        public async Task<bool> Create(UserDTO user)
+        public async Task<OperationResult<bool>> Create(UserDTO user)
         {
             try
             {
@@ -25,11 +26,11 @@ namespace Domain.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
-                return false;
+                return OperationResult<bool>.FailureResult("Unexpected error", OperationStatus.InternalError);
             }
         }
 
-        public async Task<bool> Delete(Guid id)
+        public async Task<OperationResult<bool>> Delete(Guid id)
         {
             try
             {
@@ -38,11 +39,11 @@ namespace Domain.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
-                return false;
+                return OperationResult<bool>.FailureResult("Unexpected error", OperationStatus.InternalError);
             }
         }
 
-        public async Task<UserDTO> Get(Guid id)
+        public async Task<OperationResult<UserDTO>> Get(Guid id)
         {
             try
             {
@@ -51,11 +52,11 @@ namespace Domain.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
-                return null;
+                return OperationResult<UserDTO>.FailureResult("Unexpected error", OperationStatus.InternalError);
             }
         }
 
-        public async Task<List<UserDTO>> GetAll()
+        public async Task<OperationResult<List<UserDTO>>> GetAll()
         {
             try
             {
@@ -64,11 +65,11 @@ namespace Domain.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
-                return new List<UserDTO>();
+                return OperationResult<List<UserDTO>>.FailureResult("Unexpected error", OperationStatus.InternalError);
             }
         }
 
-        public async Task<bool> Update(UserDTO user)
+        public async Task<OperationResult<bool>> Update(UserDTO user)
         {
             try
             {
@@ -77,7 +78,7 @@ namespace Domain.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
-                return false;
+                return OperationResult<bool>.FailureResult("Unexpected error", OperationStatus.InternalError);
             }
         }
     }

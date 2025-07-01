@@ -3,6 +3,7 @@ using Contracts;
 using Domain.Services;
 using Microsoft.Extensions.Logging;
 using Moq;
+using Shared;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -24,71 +25,85 @@ namespace Domain.Tests.Services
         }
 
         [Fact]
-        public async Task GetAll_ReturnsListOfUsers()
+        public async Task GetAll_ReturnsSuccess_WhenRepositorySucceeds()
         {
             var users = new List<UserDTO> { CreateStubUser() };
-            _userRepoMock.Setup(r => r.GetAll()).ReturnsAsync(users);
+            _userRepoMock
+                .Setup(r => r.GetAll())
+                .ReturnsAsync(OperationResult<List<UserDTO>>.SuccessResult(users));
 
             var result = await _service.GetAll();
 
-            Assert.Equal(users, result);
+            Assert.True(result.Success);
+            Assert.Equal(users, result.Value);
         }
 
         [Fact]
         public async Task Get_ReturnsUser_WhenExists()
         {
             var user = CreateStubUser();
-            _userRepoMock.Setup(r => r.Get(user.Id)).ReturnsAsync(user);
+            _userRepoMock
+                .Setup(r => r.Get(user.Id))
+                .ReturnsAsync(OperationResult<UserDTO>.SuccessResult(user));
 
             var result = await _service.Get(user.Id);
 
-            Assert.Equal(user, result);
+            Assert.True(result.Success);
+            Assert.Equal(user, result.Value);
         }
 
         [Fact]
-        public async Task Create_ReturnsTrue_OnSuccess()
+        public async Task Create_ReturnsSuccess_WhenRepositorySucceeds()
         {
             var user = CreateStubUser();
-            _userRepoMock.Setup(r => r.Create(user)).ReturnsAsync(true);
+            _userRepoMock
+                .Setup(r => r.Create(user))
+                .ReturnsAsync(OperationResult<bool>.SuccessResult(true));
 
             var result = await _service.Create(user);
 
-            Assert.True(result);
+            Assert.True(result.Success);
+            Assert.True(result.Value);
         }
 
         [Fact]
-        public async Task Update_ReturnsFalse_OnFailure()
+        public async Task Update_ReturnsFailure_WhenRepositoryFails()
         {
             var user = CreateStubUser();
-            _userRepoMock.Setup(r => r.Update(user)).ReturnsAsync(false);
+            _userRepoMock
+                .Setup(r => r.Update(user))
+                .ReturnsAsync(OperationResult<bool>.FailureResult("Update failed", OperationStatus.Conflict));
 
             var result = await _service.Update(user);
 
-            Assert.False(result);
+            Assert.False(result.Success);
+            Assert.Equal(OperationStatus.Conflict, result.Status);
         }
 
         [Fact]
-        public async Task Delete_ReturnsTrue_WhenSuccessful()
+        public async Task Delete_ReturnsSuccess_WhenRepositorySucceeds()
         {
             var id = Guid.NewGuid();
-            _userRepoMock.Setup(r => r.Delete(id)).ReturnsAsync(true);
+            _userRepoMock
+                .Setup(r => r.Delete(id))
+                .ReturnsAsync(OperationResult<bool>.SuccessResult(true));
 
             var result = await _service.Delete(id);
 
-            Assert.True(result);
+            Assert.True(result.Success);
+            Assert.True(result.Value);
         }
 
         [Fact]
-        public async Task GetAll_LogsException_WhenRepositoryThrows()
+        public async Task GetAll_ReturnsFailureResult_WhenRepositoryThrows()
         {
-            _userRepoMock.Setup(r => r.GetAll()).ThrowsAsync(new Exception("DB fail"));
+            _userRepoMock
+                .Setup(r => r.GetAll())
+                .ThrowsAsync(new Exception("DB failure"));
 
-            var result = await Assert.ThrowsAsync<Exception>(() => _service.GetAll());
+            var result = await _service.GetAll();
 
-            _loggerMock.Verify(
-                l => l.LogError(It.IsAny<Exception>(), It.IsAny<string>()),
-                Times.Once
-            );
+            Assert.False(result.Success);
         }
 
         private static UserDTO CreateStubUser()
