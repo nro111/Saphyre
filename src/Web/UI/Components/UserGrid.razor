@@ -1,6 +1,6 @@
-﻿<div class="table-responsive">
-	<button class="btn btn-primary" @onclick="@(() => Console.WriteLine("bob"))">Test Button</button>
+﻿@rendermode InteractiveServer
 
+<div class="table-responsive">
 	<table class="table table-dark table-hover table-bordered align-middle">
 		<thead>
 			<tr>
@@ -24,6 +24,7 @@
 			}
 		</tbody>
 	</table>
+	<button class="btn btn-primary" @onclick="@(() => AddUser())">Add User</button>
 </div>
 
 @if (isModalOpen && selectedUser != null)
@@ -35,22 +36,76 @@
 				<button class="btn-close" @onclick="CloseModal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body">
-				<p><strong>Email:</strong> @selectedUser.Email</p>
-				<p><strong>Phone:</strong> @selectedUser.Phone</p>
-				<p>
-					<strong>Address:</strong><br />
-					@selectedUser.AddressLine1<br />
-					@if (!string.IsNullOrWhiteSpace(selectedUser.AddressLine2))
-					{
-						@selectedUser.AddressLine2
-				
-						<br />
-					}
-					@($"{selectedUser.City}, {selectedUser.State} {selectedUser.PostalCode}")
-				</p>
-				<p><strong>DOB:</strong> @selectedUser.DateOfBirth.ToString("yyyy-MM-dd")</p>
+				@if (isEditing)
+				{
+					<div class="mb-2">
+						<label>First Name</label>
+						<input class="form-control" @bind="selectedUser.FirstName" />
+					</div>
+					<div class="mb-2">
+						<label>Last Name</label>
+						<input class="form-control" @bind="selectedUser.LastName" />
+					</div>
+					<div class="mb-2">
+						<label>Email</label>
+						<input class="form-control" @bind="selectedUser.Email" />
+					</div>
+					<div class="mb-2">
+						<label>Phone</label>
+						<input class="form-control" @bind="selectedUser.Phone" />
+					</div>
+					<div class="mb-2">
+						<label>Address Line 1</label>
+						<input class="form-control" @bind="selectedUser.AddressLine1" />
+					</div>
+					<div class="mb-2">
+						<label>Address Line 2</label>
+						<input class="form-control" @bind="selectedUser.AddressLine2" />
+					</div>
+					<div class="mb-2">
+						<label>City</label>
+						<input class="form-control" @bind="selectedUser.City" />
+					</div>
+					<div class="mb-2">
+						<label>State</label>
+						<input class="form-control" @bind="selectedUser.State" />
+					</div>
+					<div class="mb-2">
+						<label>Postal Code</label>
+						<input class="form-control" @bind="selectedUser.PostalCode" />
+					</div>
+					<div class="mb-2">
+						<label>Date of Birth</label>
+						<input type="date" class="form-control" @bind="selectedUser.DateOfBirth" />
+					</div>
+				}
+				else
+				{
+					<p><strong>Email:</strong> @selectedUser.Email</p>
+					<p><strong>Phone:</strong> @selectedUser.Phone</p>
+					<p>
+						<strong>Address:</strong><br />
+						@selectedUser.AddressLine1<br />
+						@if (!string.IsNullOrWhiteSpace(selectedUser.AddressLine2))
+						{
+							@selectedUser.AddressLine2
+							<br />
+						}
+						@($"{selectedUser.City}, {selectedUser.State} {selectedUser.PostalCode}")
+					</p>
+					<p><strong>DOB:</strong> @selectedUser.DateOfBirth.ToString("yyyy-MM-dd")</p>
+				}
 			</div>
 			<div class="modal-footer">
+				@if (!isEditing)
+				{
+					<button class="btn btn-primary" @onclick="EnableEdit">Edit</button>
+				}
+				else
+				{
+					<button class="btn btn-success" @onclick="SaveChanges">Save</button>
+					<button class="btn btn-warning" @onclick="CancelEdit">Cancel</button>
+				}
 				<button class="btn btn-secondary" @onclick="CloseModal">Close</button>
 			</div>
 		</div>
@@ -94,6 +149,8 @@
 
 	private UserDTO selectedUser;
 	private bool isModalOpen = false;
+	private bool isEditing = false;
+
 
 	private void ShowDetails(UserDTO user)
 	{
@@ -102,10 +159,65 @@
 		StateHasChanged(); // force re-render
 	}
 
-
 	private void CloseModal()
 	{
 		selectedUser = null;
 		isModalOpen = false;
+	}
+
+	private void AddUser()
+	{
+		selectedUser = new UserDTO
+		{
+			Id = Guid.NewGuid(),
+			DateOfBirth = DateTime.Today
+		};
+		isEditing = true;
+		isModalOpen = true;
+	}
+
+	private void EnableEdit()
+	{
+		isEditing = true;
+	}
+
+	private void CancelEdit()
+	{
+		// Null out the selectedUser
+		if (!Users.Any(u => u.Id == selectedUser.Id))
+		{
+			selectedUser = null;
+			isModalOpen = false;
+		}
+
+		isEditing = false;
+	}
+
+	private void SaveChanges()
+	{
+		var existing = Users.FirstOrDefault(u => u.Id == selectedUser.Id);
+		if (existing == null)
+		{
+			// Add the new user
+			Users.Add(selectedUser);
+		}
+		else
+		{
+			// Update the selected user's property values
+			existing.FirstName = selectedUser.FirstName;
+			existing.LastName = selectedUser.LastName;
+			existing.Email = selectedUser.Email;
+			existing.Phone = selectedUser.Phone;
+			existing.AddressLine1 = selectedUser.AddressLine1;
+			existing.AddressLine2 = selectedUser.AddressLine2;
+			existing.City = selectedUser.City;
+			existing.State = selectedUser.State;
+			existing.PostalCode = selectedUser.PostalCode;
+			existing.DateOfBirth = selectedUser.DateOfBirth;
+		}
+
+		isEditing = false;
+		isModalOpen = false;
+		StateHasChanged(); // Force UI refresh
 	}
 }

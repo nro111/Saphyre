@@ -3,26 +3,8 @@
 
 <PageTitle>Home</PageTitle>
 
-<table class="table table-dark table-hover">
-    <tbody>
-        <tr @onclick="@(() => ShowDetails())">
-            <td>Jane</td>
-            <td>Doe</td>
-        </tr>
-    </tbody>
-</table>
-
-<p>@clickedMsg</p>
-
 <UserGrid></UserGrid>
 
-<UserForm></UserForm>
-
 @code {
-    private string clickedMsg = "e";
 
-    private void ShowDetails()
-    {
-        clickedMsg = $"Clicked at {DateTime.Now}";
-    }
 }
