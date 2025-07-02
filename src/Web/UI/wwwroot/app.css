@@ -1,3 +1,72 @@
+body {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+label {
+    color: #cccccc;
+}
+
+input.form-control {
+    background-color: #1e1e1e;
+    border: 1px solid #333;
+    color: #ffffff;
+}
+
+    input.form-control:focus {
+        background-color: #2a2a2a;
+        color: #ffffff;
+        border-color: #666;
+        box-shadow: none;
+    }
+
+button.btn-primary {
+    background-color: #3a84df;
+    border-color: #3a84df;
+}
+
+    button.btn-primary:hover {
+        background-color: #326fc2;
+        border-color: #326fc2;
+    }
+
+.custom-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.75);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1050;
+}
+
+.custom-modal-content {
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+.modal-header,
+.modal-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btn-close {
+    background: transparent;
+    border: none;
+    font-size: 1.25rem;
+    color: #fff;
+}
+
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
