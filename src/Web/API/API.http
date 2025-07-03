@@ -1,6 +1,34 @@
-@Saphyre.Web.API_HostAddress = http://localhost:5143
+@Saphyre.Web.API_HostAddress = https://localhost:7052
 
-GET {{Saphyre.Web.API_HostAddress}}/weatherforecast/
+GET {{Saphyre.Web.API_HostAddress}}/api/users/all
+Accept: application/json
+
+###
+
+GET {{Saphyre.Web.API_HostAddress}}/api/users/3fbcf1a3-291b-4556-a580-2c84dcf824f0
+Accept: application/json
+
+###
+
+POST {{Saphyre.Web.API_HostAddress}}/api/users
+Content-Type: application/json
+
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john.doe@example.com",
+  "phone": "5555555555",
+  "addressLine1": "123 Main St",
+  "addressLine2": "",
+  "city": "Springfield",
+  "state": "IL",
+  "postalCode": "62704",
+  "dateOfBirth": "1990-05-21"
+}
+
+###
+
+DELETE {{Saphyre.Web.API_HostAddress}}/api/users/3fbcf1a3-291b-4556-a580-2c84dcf824f0
 Accept: application/json
 
 ###
