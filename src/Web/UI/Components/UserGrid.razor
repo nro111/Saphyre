@@ -1,4 +1,6 @@
-﻿@rendermode InteractiveServer
+﻿@using UI.Clients
+@rendermode InteractiveServer
+@inject IApiClient ApiClient
 
 <div class="table-responsive">
 	<table class="table table-dark table-hover table-bordered align-middle">
@@ -113,7 +115,7 @@
 }
 
 @code {
-	[Parameter]
+	[Parameter]	
 	public List<UserDTO> Users { get; set; } = new List<UserDTO>() {
 
 		new UserDTO
@@ -146,11 +148,9 @@
 			}
 	};
 
-
 	private UserDTO selectedUser;
 	private bool isModalOpen = false;
 	private bool isEditing = false;
-
 
 	private void ShowDetails(UserDTO user)
 	{
@@ -193,16 +193,23 @@
 		isEditing = false;
 	}
 
-	private void SaveChanges()
+	private async Task SaveChanges()
 	{
 		var existing = Users.FirstOrDefault(u => u.Id == selectedUser.Id);
 		if (existing == null)
 		{
-			// Add the new user
-			Users.Add(selectedUser);
+			// Pass the new user data to the api
+			var success = await ApiClient.CreateAsync(selectedUser);
+
+			// If it worked, add the new user to the Users list
+			if(success)
+				Users.Add(selectedUser);
 		}
 		else
 		{
+			// Create a holder to reset the user updates if something happens
+			var holder = existing;
+
 			// Update the selected user's property values
 			existing.FirstName = selectedUser.FirstName;
 			existing.LastName = selectedUser.LastName;
@@ -214,6 +221,12 @@
 			existing.State = selectedUser.State;
 			existing.PostalCode = selectedUser.PostalCode;
 			existing.DateOfBirth = selectedUser.DateOfBirth;
+
+			// Pass all updates to the api
+			var success = await ApiClient.UpdateAsync(existing);
+
+			if (!success)
+				existing = holder;
 		}
 
 		isEditing = false;

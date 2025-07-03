@@ -34,13 +34,13 @@ namespace API.Controllers
                     OperationStatus.Ok => Ok(result.Value),
                     OperationStatus.NotFound => NotFound(result.Error),
                     OperationStatus.InternalError => StatusCode(500, result.Error),
-                    _ => Problem("Unexpected result status")
+                    _ => Problem()
                 };
             }
             catch (Exception ex) 
             {
                 _logger.LogError(ex, ex.Message);
-                return Problem("Unexpected result status");
+                return Problem();
             }
         }
 
@@ -59,7 +59,7 @@ namespace API.Controllers
                     OperationStatus.Ok => Ok(result.Value),
                     OperationStatus.NotFound => NotFound(result.Error),
                     OperationStatus.InternalError => StatusCode(500, result.Error),
-                    _ => Problem("Unexpected result status")
+                    _ => Problem()
                 };
             }
             catch (Exception ex)
@@ -83,7 +83,7 @@ namespace API.Controllers
                     OperationStatus.Ok => Ok(result.Value),
                     OperationStatus.NotFound => NotFound(result.Error),
                     OperationStatus.InternalError => StatusCode(500, result.Error),
-                    _ => Problem("Unexpected result status")
+                    _ => Problem()
                 };
             }
             catch (Exception ex)
@@ -97,7 +97,7 @@ namespace API.Controllers
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<UserDTO>> Update(UserDTO user)
+        public async Task<ActionResult<bool>> Update(UserDTO user)
         {
             try
             {
@@ -107,7 +107,7 @@ namespace API.Controllers
                     OperationStatus.Ok => Ok(result.Value),
                     OperationStatus.NotFound => NotFound(result.Error),
                     OperationStatus.InternalError => StatusCode(500, result.Error),
-                    _ => Problem("Unexpected result status")
+                    _ => Problem()
                 };
             }
             catch (Exception ex)
@@ -121,7 +121,7 @@ namespace API.Controllers
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<UserDTO>> Delete(Guid id)
+        public async Task<ActionResult<bool>> Delete(Guid id)
         {
             try
             {
@@ -131,7 +131,7 @@ namespace API.Controllers
                     OperationStatus.Ok => Ok(result.Value),
                     OperationStatus.NotFound => NotFound(result.Error),
                     OperationStatus.InternalError => StatusCode(500, result.Error),
-                    _ => Problem("Unexpected result status")
+                    _ => Problem()
                 };
             }
             catch (Exception ex)
