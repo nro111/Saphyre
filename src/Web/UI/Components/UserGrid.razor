@@ -11,17 +11,21 @@
 				<th>Phone</th>
 				<th>City/State</th>
 				<th>DOB</th>
+				<th>Actions</th>
 			</tr>
 		</thead>
 		<tbody>
 			@foreach (var user in Users)
 			{
-				<tr @onclick="@(() => ShowDetails(user))" style="cursor: pointer;">
-					<td>@($"{user.FirstName} {user.LastName}")</td>
-					<td>@user.Email</td>
-					<td>@user.Phone</td>
-					<td>@($"{user.City}, {user.State}")</td>
-					<td>@user.DateOfBirth.ToString("yyyy-MM-dd")</td>
+				<tr>
+					<td @onclick="@(() => ShowDetails(user))" style="cursor: pointer;">@($"{user.FirstName} {user.LastName}")</td>
+					<td @onclick="@(() => ShowDetails(user))" style="cursor: pointer;">@user.Email</td>
+					<td @onclick="@(() => ShowDetails(user))" style="cursor: pointer;">@user.Phone</td>
+					<td @onclick="@(() => ShowDetails(user))" style="cursor: pointer;">@($"{user.City}, {user.State}")</td>
+					<td @onclick="@(() => ShowDetails(user))" style="cursor: pointer;">@user.DateOfBirth.ToString("yyyy-MM-dd")</td>
+					<td>
+						<button class="btn btn-sm btn-danger" @onclick="@(e => DeleteUser(user.Id))">Delete</button>
+					</td>
 				</tr>
 			}
 		</tbody>
@@ -29,6 +33,7 @@
 	<button class="btn btn-primary" @onclick="@(() => AddUser())">Add User</button>
 </div>
 
+<!-- Display the user modal -->
 @if (isModalOpen && selectedUser != null)
 {
 	<div class="custom-modal-backdrop">
@@ -38,6 +43,7 @@
 				<button class="btn-close" @onclick="CloseModal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body">
+				<!-- Switch between editing and viewing -->
 				@if (isEditing)
 				{
 					<div class="mb-2">
@@ -115,7 +121,7 @@
 }
 
 @code {
-	[Parameter]	
+	[Parameter]
 	public List<UserDTO> Users { get; set; } = new List<UserDTO>() {
 
 		new UserDTO
@@ -151,6 +157,30 @@
 	private UserDTO selectedUser;
 	private bool isModalOpen = false;
 	private bool isEditing = false;
+	private List<UserDTO> allUsers = new List<UserDTO>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		//allUsers = await ApiClient.GetAllAsync();
+	}
+
+	private async Task DeleteUser(Guid id)
+	{
+		// Get the user with the matching id
+		var user = Users.FirstOrDefault(u => u.Id == id);
+
+		// Fail fast if the user is null
+		if (user == null) return;
+
+		var success = await ApiClient.DeleteAsync(id);
+
+		// Remove the user from the user collection and rerender the component state
+		if (success)
+		{
+			Users.Remove(user);
+			StateHasChanged();
+		}
+	}
 
 	private void ShowDetails(UserDTO user)
 	{
@@ -167,6 +197,7 @@
 
 	private void AddUser()
 	{
+		// Initialize the new user
 		selectedUser = new UserDTO
 		{
 			Id = Guid.NewGuid(),
@@ -183,7 +214,7 @@
 
 	private void CancelEdit()
 	{
-		// Null out the selectedUser
+		// Null out the selectedUser and hide the modal
 		if (!Users.Any(u => u.Id == selectedUser.Id))
 		{
 			selectedUser = null;
@@ -195,14 +226,16 @@
 
 	private async Task SaveChanges()
 	{
+		// Get the user from the collection with matchin id
 		var existing = Users.FirstOrDefault(u => u.Id == selectedUser.Id);
+
 		if (existing == null)
 		{
 			// Pass the new user data to the api
 			var success = await ApiClient.CreateAsync(selectedUser);
 
 			// If it worked, add the new user to the Users list
-			if(success)
+			if (success)
 				Users.Add(selectedUser);
 		}
 		else
@@ -225,6 +258,7 @@
 			// Pass all updates to the api
 			var success = await ApiClient.UpdateAsync(existing);
 
+			// If it failed, reset the user properties
 			if (!success)
 				existing = holder;
 		}
