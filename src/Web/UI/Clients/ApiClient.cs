@@ -15,10 +15,25 @@ namespace UI.Clients
             _http = http;
         }
 
+
+        public async Task<bool> RegisterAsync(AuthenticationDTO authentication)
+        {
+            var response = await _http.PostAsJsonAsync("api/auth/register", authentication, _jsonOptions);
+            //response.EnsureSuccessStatusCode();
+            return (await response.Content.ReadFromJsonAsync<bool>(_jsonOptions))!;
+        }
+
+        public async Task<bool> LoginAsync(AuthenticationDTO authentication)
+        {
+            var response = await _http.PostAsJsonAsync("api/auth/login", authentication, _jsonOptions);
+            //response.EnsureSuccessStatusCode();
+            return (await response.Content.ReadFromJsonAsync<bool>(_jsonOptions))!;
+        }
+
         public async Task<List<UserDTO>> GetAllAsync()
         {
             var response = await _http.GetAsync("api/users/all");
-            response.EnsureSuccessStatusCode();
+            //response.EnsureSuccessStatusCode();
             return (await response.Content.ReadFromJsonAsync<List<UserDTO>>(_jsonOptions))!;
         }
 

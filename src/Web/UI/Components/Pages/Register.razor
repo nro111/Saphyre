@@ -1,0 +1,45 @@
+﻿@page "/register"
+@using Microsoft.AspNetCore.Components.Authorization
+@using UI.Clients
+@inject NavigationManager Nav
+@inject IApiClient ApiClient
+@inject AuthenticationStateProvider AuthProvider
+
+<h3>Register</h3>
+
+@if (!string.IsNullOrEmpty(ErrorMessage))
+{
+    <div class="alert alert-danger">@ErrorMessage</div>
+}
+
+<EditForm Model="@registerModel" OnValidSubmit="@HandleRegister">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <InputText @bind-Value="registerModel.Email" placeholder="Email" class="form-control" />
+    <InputText @bind-Value="registerModel.Password" placeholder="Password" type="password" class="form-control" />
+    <button class="btn btn-primary mt-2">Register</button>
+</EditForm>
+
+@code {
+    private AuthenticationDTO registerModel = new AuthenticationDTO() { Email = string.Empty, Password = string.Empty };
+    private string? ErrorMessage;
+
+    private async Task HandleRegister()
+    {
+        var auth = new AuthenticationDTO()
+            {
+                Email = registerModel.Email,
+                Password = "" //registerModel.Password.GetHashCode();
+            };
+        var result = await ApiClient.RegisterAsync(registerModel);
+        if (result)
+        {
+            Nav.NavigateTo("/");
+        }
+        else
+        {
+            ErrorMessage = "Registration failed.";
+        }
+    }
+}

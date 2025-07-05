@@ -1,0 +1,43 @@
+﻿@page "/login"
+@using UI.Clients
+@inject NavigationManager Nav
+@inject IApiClient ApiClient
+
+<h3>Login</h3>
+
+@if (!string.IsNullOrEmpty(ErrorMessage))
+{
+    <div class="alert alert-danger">@ErrorMessage</div>
+}
+
+<EditForm Model="@loginModel" OnValidSubmit="@HandleLogin">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <InputText @bind-Value="loginModel.Email" placeholder="Email" class="form-control" />
+    <InputText @bind-Value="loginModel.Password" placeholder="Password" type="password" class="form-control" />
+    <button class="btn btn-primary mt-2">Login</button>
+</EditForm>
+
+@code {
+    private AuthenticationDTO loginModel = new AuthenticationDTO() { Email = string.Empty, Password = string.Empty };
+    private string? ErrorMessage;
+
+    private async Task HandleLogin()
+    {
+        var auth = new AuthenticationDTO()
+        {
+            Email = loginModel.Email,
+            Password = "" //registerModel.Password.GetHashCode();
+        };
+        var result = await ApiClient.LoginAsync(auth);
+        if (result)
+        {
+            Nav.NavigateTo("/");
+        }
+        else
+        {
+            ErrorMessage = "Invalid credentials.";
+        }
+    }
+}
