@@ -1,4 +1,5 @@
 ﻿@page "/register"
+@rendermode InteractiveServer
 @using Microsoft.AspNetCore.Components.Authorization
 @using UI.Clients
 @inject NavigationManager Nav
@@ -12,20 +13,31 @@
     <div class="alert alert-danger">@ErrorMessage</div>
 }
 
-<EditForm Model="@registerModel" OnValidSubmit="@HandleRegister">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+<div>
+    <label>Email</label>
+    <input @bind="registerModel.Email" placeholder="Email" class="form-control" />
 
-    <InputText @bind-Value="registerModel.Email" placeholder="Email" class="form-control" />
-    <InputText @bind-Value="registerModel.Password" placeholder="Password" type="password" class="form-control" />
-    <InputText @bind-Value="registerModel.FirstName" placeholder="Firstname" class="form-control" />
-    <InputText @bind-Value="registerModel.LastName" placeholder="Lastname" class="form-control" />
-    <button class="btn btn-primary mt-2">Register</button>
-</EditForm>
+    <label>Password</label>
+    <input @bind="registerModel.Password" placeholder="Password" type="password" class="form-control" />
+
+    <label>FirstName</label>
+    <input @bind="registerModel.FirstName" placeholder="FirstName" class="form-control" />
+
+    <label>LastName</label>
+    <input @bind="registerModel.LastName" placeholder="LastName" class="form-control" />
+
+    <button @onclick="HandleRegister" class="btn btn-primary mt-2">Register</button>
+    <button @onclick="GoToLogin" class="btn btn-primary mt-2">Go To Login</button>
+</div>
 
 @code {
     private RegistrationDTO registerModel = new RegistrationDTO() { Email = string.Empty, Password = string.Empty };
     private string? ErrorMessage;
+
+    private void GoToLogin()
+    {
+        Nav.NavigateTo("/");
+    }
 
     private async Task HandleRegister()
     {

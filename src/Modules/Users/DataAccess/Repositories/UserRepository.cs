@@ -48,6 +48,8 @@ namespace DataAccess.Repositories
                             UpdatedAt = DateTime.UtcNow,
                         });
 
+                await _context.SaveChangesAsync();
+
                 return OperationResult<bool>.SuccessResult(true);
             }
             catch (Exception ex)
@@ -69,6 +71,9 @@ namespace DataAccess.Repositories
                     return OperationResult<bool>.FailureResult("User not found", OperationStatus.NotFound);
 
                 _context.Set<User>().Remove(userToDelete);
+
+                await _context.SaveChangesAsync();
+
                 return OperationResult<bool>.SuccessResult(true);
             }
             catch (Exception ex)

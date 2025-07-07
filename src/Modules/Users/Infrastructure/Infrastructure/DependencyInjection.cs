@@ -14,9 +14,21 @@ namespace Infrastructure
         {
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserRepository, UserRepository>();
+            var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING"); 
+            if (string.IsNullOrWhiteSpace(connectionString))
+            {
+                throw new InvalidOperationException("DB_CONNECTION_STRING environment variable is not set.");
+            }
 
             services.AddDbContext<SaphyreContext>(options =>
-                options.UseSqlServer(config.GetConnectionString("DefaultConnection")));
+                options.UseNpgsql(connectionString, npgsqlOptions =>
+                {
+                    npgsqlOptions.CommandTimeout(15);
+                    npgsqlOptions.EnableRetryOnFailure();
+                })
+                .EnableSensitiveDataLogging()
+                .EnableDetailedErrors()                
+            );
 
             return services;
         }

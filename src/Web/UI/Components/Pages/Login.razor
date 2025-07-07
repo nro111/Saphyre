@@ -1,5 +1,6 @@
 ﻿@page "/login"
 @using UI.Clients
+@rendermode InteractiveServer
 @inject NavigationManager Nav
 @inject IApiClient ApiClient
 
@@ -10,18 +11,24 @@
     <div class="alert alert-danger">@ErrorMessage</div>
 }
 
-<EditForm Model="@loginModel" OnValidSubmit="@HandleLogin">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+<div>
+    <label>Email</label>
+    <input @bind="loginModel.Email" placeholder="Email" class="form-control" />
 
-    <InputText @bind-Value="loginModel.Email" placeholder="Email" class="form-control" />
-    <InputText @bind-Value="loginModel.Password" placeholder="Password" type="password" class="form-control" />
-    <button class="btn btn-primary mt-2">Login</button>
-</EditForm>
+    <label>Password</label>
+    <input @bind="loginModel.Password" placeholder="Password" type="password" class="form-control" />
+    <button @onclick="HandleLogin" class="btn btn-primary mt-2">Login</button>
+    <button @onclick="GoToRegister" class="btn btn-primary mt-2">Go To Register</button>
+</div>
 
 @code {
     private AuthenticationDTO loginModel = new AuthenticationDTO() { Email = string.Empty, Password = string.Empty };
     private string? ErrorMessage;
+
+    private void GoToRegister()
+    {
+        Nav.NavigateTo("/register");
+    }
 
     private async Task HandleLogin()
     {
@@ -33,7 +40,7 @@
         var result = await ApiClient.LoginAsync(auth);
         if (result)
         {
-            Nav.NavigateTo("/");
+            Nav.NavigateTo("/home");
         }
         else
         {

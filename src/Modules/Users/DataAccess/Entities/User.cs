@@ -6,6 +6,7 @@ namespace Entities
 {
     // I was originally going to use SQL but decided to go with Postgres on Suprabase.
     // Column attributes are being used to match with Postgres snake case conventions.
+    [Table("users")]
     public partial class User
     {
         [Key]

@@ -11,7 +11,7 @@ namespace DataAccess.Context
     {
         private readonly IConfiguration _configuration;
 
-        public static readonly string Schema = "dbo";
+        public static readonly string Schema = "public";
 
         public SaphyreContext(DbContextOptions<SaphyreContext> options, IConfiguration configuration)
             : base(options)
@@ -24,14 +24,6 @@ namespace DataAccess.Context
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-                // Get the connection string from appsettings.json
-                var connectionString = _configuration.GetConnectionString("");
-
-                // Use Npgsql with the connection string
-                //optionsBuilder.UseNpgsql(connectionString);
-            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

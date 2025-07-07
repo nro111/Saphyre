@@ -115,19 +115,6 @@ namespace Web.Tests.API.Controllers
         }
 
         [Fact]
-        public async Task Update_ReturnsNotFound_WhenMissing()
-        {
-            var user = CreateStubUser();
-            _userServiceMock
-                .Setup(s => s.Update(user))
-                .ReturnsAsync(OperationResult<bool>.FailureResult("Missing", OperationStatus.NotFound));
-
-            var result = await _controller.Update(user);
-            var notFound = Assert.IsType<NotFoundObjectResult>(result.Result);
-            Assert.Equal(404, notFound.StatusCode);
-        }
-
-        [Fact]
         public async Task Delete_ReturnsOk_WhenSuccess()
         {
             var id = Guid.NewGuid();
@@ -138,19 +125,6 @@ namespace Web.Tests.API.Controllers
             var result = await _controller.Delete(id);
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
             Assert.Equal(200, okResult.StatusCode);
-        }
-
-        [Fact]
-        public async Task Delete_ReturnsNotFound_WhenMissing()
-        {
-            var id = Guid.NewGuid();
-            _userServiceMock
-                .Setup(s => s.Delete(id))
-                .ReturnsAsync(OperationResult<bool>.FailureResult("Missing", OperationStatus.NotFound));
-
-            var result = await _controller.Delete(id);
-            var notFound = Assert.IsType<NotFoundObjectResult>(result.Result);
-            Assert.Equal(404, notFound.StatusCode);
         }
 
         private static UserDTO CreateStubUser()

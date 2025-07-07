@@ -6,12 +6,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+var apiBaseUrl = Environment.GetEnvironmentVariable("API_BASE_URL") ?? "http://localhost:5000";
+
 builder.Services.AddHttpClient<IApiClient, ApiClient>("Api", client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7052");
+    client.BaseAddress = new Uri(apiBaseUrl);
 });
-
-builder.WebHost.UseUrls("http://0.0.0.0:8080");
 
 builder.Services.AddAuthentication("Cookies")
     .AddCookie("Cookies", options => {

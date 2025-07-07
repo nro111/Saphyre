@@ -2,24 +2,24 @@ version: '3.9'
 
 services:
   api:
-    image: saphyre-api
     build:
       context: .
-      dockerfile: Dockerfile
-      target: api-runtime
+      dockerfile: ./src/Web/API/Dockerfile
+    image: saphyre-api
     ports:
       - "5000:5000"
+    env_file: .env
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:5000
 
   ui:
-    image: saphyre-ui
     build:
       context: .
-      dockerfile: Dockerfile
-      target: ui-runtime
+      dockerfile: ./src/Web/UI/Dockerfile
+    image: saphyre-ui
     ports:
       - "8080:8080"
+    env_file: .env
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     depends_on:

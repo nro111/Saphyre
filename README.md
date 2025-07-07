@@ -1,6 +1,14 @@
 # Saphyre
 CRUD application to demonstrate clean code and SOLID principles. This application utilizes a preview version of .Net 10 and is run with Docker. 
 
+## How to run
+Send me an email and I will provide the full .env file. Once you have that, you can just run the following command from the root folder:
+
+docker-compose up --build
+
+Keep in mind that the performance is going to be slow and you will see edits/deletes/inserts attempt to return to the 
+UI before the actual db write operation finishes.
+
 ## Application architecture overview
 This application utilizes a modular monolithic architecture with the following layers:
 

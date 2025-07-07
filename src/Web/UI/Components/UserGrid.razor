@@ -122,46 +122,15 @@
 
 @code {
 	[Parameter]
-	public List<UserDTO> Users { get; set; } = new List<UserDTO>() {
+	public List<UserDTO> Users { get; set; } = new List<UserDTO>();
 
-		new UserDTO
-			{
-				Id = Guid.NewGuid(),
-				FirstName = "Jane",
-				LastName = "Doe",
-				Email = "jane.doe@example.com",
-				Phone = "5551234567",
-				AddressLine1 = "123 Main St",
-				AddressLine2 = "Apt 4B",
-				City = "Springfield",
-				State = "IL",
-				PostalCode = "62704",
-				DateOfBirth = new DateTime(1990, 5, 21)
-			},
-		new UserDTO
-			{
-				Id = Guid.NewGuid(),
-				FirstName = "joe",
-				LastName = "Doe",
-				Email = "joe.doe@example.com",
-				Phone = "1111111111",
-				AddressLine1 = "123 Main St",
-				AddressLine2 = "Apt 4B",
-				City = "Springfield",
-				State = "IL",
-				PostalCode = "62704",
-				DateOfBirth = new DateTime(1990, 5, 21)
-			}
-	};
-
-	private UserDTO selectedUser;
+	private UserDTO selectedUser = new();
 	private bool isModalOpen = false;
 	private bool isEditing = false;
-	private List<UserDTO> allUsers = new List<UserDTO>();
 
 	protected override async Task OnInitializedAsync()
 	{
-		//allUsers = await ApiClient.GetAllAsync();
+		Users = await ApiClient.GetAllAsync();
 	}
 
 	private async Task DeleteUser(Guid id)
