@@ -4,7 +4,7 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 COPY . .
-RUN dotnet publish src/Web/API/API.csproj -c Release -o /app/publish
+RUN dotnet publish Web/API/API.csproj -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
