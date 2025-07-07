@@ -28,7 +28,7 @@
         var auth = new AuthenticationDTO()
         {
             Email = loginModel.Email,
-            Password = "" //registerModel.Password.GetHashCode();
+            Password = loginModel.Password
         };
         var result = await ApiClient.LoginAsync(auth);
         if (result)

@@ -12,13 +12,18 @@ namespace DataAccess.Repositories
     {
         private readonly SaphyreContext _context;
         private readonly ILogger<IUserRepository> _logger;
+        private readonly Supabase.Client _supabaseClient;
+
         public UserRepository(
             SaphyreContext context,
-            ILogger<IUserRepository> logger)
+            ILogger<IUserRepository> logger,
+            Supabase.Client supabaseClient)
         {
             _context = context;
             _logger = logger;
+            _supabaseClient = supabaseClient;
         }
+
         public async Task<OperationResult<bool>> Create(UserDTO user)
         {
             try
@@ -38,7 +43,9 @@ namespace DataAccess.Repositories
                             City = user.City,
                             State = user.State,
                             PostalCode = user.PostalCode,
-                            DateOfBirth = user.DateOfBirth
+                            DateOfBirth = user.DateOfBirth,
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow,
                         });
 
                 return OperationResult<bool>.SuccessResult(true);
@@ -143,6 +150,62 @@ namespace DataAccess.Repositories
             }
         }
 
+        public async Task<OperationResult<bool>> Register(RegistrationDTO dto)
+        {
+            try
+            {
+
+                var response = await _supabaseClient.Auth.SignUp(dto.Email, dto.Password);
+                if (response.User == null)
+                    return OperationResult<bool>.FailureResult("Failed to register with Supabase", OperationStatus.InternalError);
+
+                var user = new User
+                {
+                    Id = Guid.NewGuid(),
+                    FirstName = dto.FirstName,
+                    LastName = dto.LastName,
+                    Email = dto.Email,
+                    Phone = string.Empty,
+                    AddressLine1 = string.Empty,
+                    AddressLine2 = string.Empty,
+                    City = string.Empty,
+                    State = string.Empty,
+                    PostalCode = string.Empty,
+                    DateOfBirth = DateTime.MinValue,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                };
+
+                await _context.Set<User>().AddAsync(user);
+                await _context.SaveChangesAsync();
+
+                return OperationResult<bool>.SuccessResult(true);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return OperationResult<bool>.FailureResult("Unexpected error", OperationStatus.InternalError);
+            }
+        }
+
+        public async Task<OperationResult<bool>> Login(AuthenticationDTO dto)
+        {
+            try
+            {
+                var response = await _supabaseClient.Auth.SignIn(dto.Email, dto.Password);
+                if (response.User == null)
+                    return OperationResult<bool>.FailureResult("Invalid credentials", OperationStatus.Unauthorized);
+
+                return OperationResult<bool>.SuccessResult(true);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return OperationResult<bool>.FailureResult("Unexpected error", OperationStatus.InternalError);
+            }
+        }
+
+
         public async Task<OperationResult<bool>> Update(UserDTO user)
         {
             try
@@ -153,6 +216,18 @@ namespace DataAccess.Repositories
 
                 if (foundUser == null)
                     return OperationResult<bool>.FailureResult("User not found", OperationStatus.NotFound);
+
+                foundUser.AddressLine1 = user.AddressLine1;
+                foundUser.AddressLine2 = user.AddressLine2;
+                foundUser.City = user.City;
+                foundUser.State = user.State;
+                foundUser.PostalCode = user.PostalCode;
+                foundUser.DateOfBirth = user.DateOfBirth;
+                foundUser.Email = user.Email;
+                foundUser.FirstName = user.FirstName;
+                foundUser.LastName = user.LastName;
+                foundUser.Phone = user.Phone;
+                foundUser.UpdatedAt = DateTime.UtcNow;
 
                 _context
                     .Set<User>()

@@ -16,16 +16,16 @@ namespace UI.Clients
         }
 
 
-        public async Task<bool> RegisterAsync(AuthenticationDTO authentication)
+        public async Task<bool> RegisterAsync(RegistrationDTO registrationDTO)
         {
-            var response = await _http.PostAsJsonAsync("api/auth/register", authentication, _jsonOptions);
+            var response = await _http.PostAsJsonAsync("api/users/register", registrationDTO, _jsonOptions);
             //response.EnsureSuccessStatusCode();
             return (await response.Content.ReadFromJsonAsync<bool>(_jsonOptions))!;
         }
 
-        public async Task<bool> LoginAsync(AuthenticationDTO authentication)
+        public async Task<bool> LoginAsync(AuthenticationDTO authenticationDTO)
         {
-            var response = await _http.PostAsJsonAsync("api/auth/login", authentication, _jsonOptions);
+            var response = await _http.PostAsJsonAsync("api/users/login", authenticationDTO, _jsonOptions);
             //response.EnsureSuccessStatusCode();
             return (await response.Content.ReadFromJsonAsync<bool>(_jsonOptions))!;
         }

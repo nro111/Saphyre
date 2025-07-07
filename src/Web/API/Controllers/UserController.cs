@@ -1,5 +1,6 @@
 ﻿using Application.Interfaces;
 using Contracts;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
 
@@ -17,6 +18,40 @@ namespace API.Controllers
         {
             _userService = userService;
             _logger = logger;
+        }
+
+        [HttpPost("login")]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Login(AuthenticationDTO authenticationDTO)
+        {
+            var result = await _userService.Login(authenticationDTO);
+            return result.Status switch
+            {
+                OperationStatus.Ok => Ok(result.Value),
+                OperationStatus.NotFound => NotFound(result.Error),
+                OperationStatus.InternalError => StatusCode(500, result.Error),
+                _ => Problem()
+            };
+        }
+
+        [HttpPost("register")]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Register(RegistrationDTO registrationDTO)
+        {
+            var result = await _userService.Register(registrationDTO);
+            return result.Status switch
+            {
+                OperationStatus.Ok => Ok(result.Value),
+                OperationStatus.NotFound => NotFound(result.Error),
+                OperationStatus.InternalError => StatusCode(500, result.Error),
+                _ => Problem()
+            };
         }
 
         [HttpGet("all")]

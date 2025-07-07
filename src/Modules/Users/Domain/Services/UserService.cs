@@ -69,6 +69,32 @@ namespace Domain.Services
             }
         }
 
+        public async Task<OperationResult<bool>> Login(AuthenticationDTO authenticationDTO)
+        {
+            try
+            {
+                return await _userRepository.Login(authenticationDTO);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return OperationResult<bool>.FailureResult("Unexpected error", OperationStatus.InternalError);
+            }
+        }
+
+        public async Task<OperationResult<bool>> Register(RegistrationDTO registrationDTO)
+        {
+            try
+            {
+                return await _userRepository.Register(registrationDTO);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return OperationResult<bool>.FailureResult("Unexpected error", OperationStatus.InternalError);
+            }
+        }
+
         public async Task<OperationResult<bool>> Update(UserDTO user)
         {
             try
