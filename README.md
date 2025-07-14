@@ -10,7 +10,7 @@ Keep in mind that the performance is going to be slow and you will see edits/del
 UI before the actual db write operation finishes.
 
 ## Application architecture overview
-This application utilizes a modular monolithic architecture with the following layers:
+This application utilizes a textbook modular monolithic architecture with the following layers:
 
 * Modules
   * User
